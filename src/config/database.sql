@@ -5,8 +5,6 @@ CREATE DATABASE water_logistics;
 \c water_logistics;
 
 
-
-
 CREATE TABLE customer(
     id 
 )
