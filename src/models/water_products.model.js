@@ -1,13 +1,14 @@
 import mongoose, { model, Schema } from "mongoose";
 
-
-const water_productsSchema = new Schema({
+const water_productsSchema = new Schema(
+  {
     name: { type: String, required: true },
-    volume_liters: {type: Number, required: true },
-    price: {type: Number, required: true }
-}, {versionKey: false, timestamps: true })
+    volume_liters: { type: Number, required: true },
+    price: { type: Number, required: true },
+  },
+  { versionKey: false, timestamps: true },
+);
 
-const water_productsModel = model("water_products", water_productsSchema)
+const water_productsModel = model("water_products", water_productsSchema);
 
-
-export default water_productsModel
+export default water_productsModel;

@@ -2,14 +2,28 @@ export default {
   extends: ["@commitlint/config-conventional"],
   parserPreset: "conventional-changelog-conventionalcommits",
   rules: {
-    "type-enum": [2, "always", [
-      "feat", "fix", "docs", "style", "refactor",
-      "perf", "test", "build", "ci", "chore", "revert"
-    ]],
+    "type-enum": [
+      2,
+      "always",
+      [
+        "feat",
+        "fix",
+        "docs",
+        "style",
+        "refactor",
+        "perf",
+        "test",
+        "build",
+        "ci",
+        "chore",
+        "revert",
+      ],
+    ],
   },
   ignores: [(commit) => commit === ""],
   defaultIgnores: true,
-  helpUrl: "https://github.com/conventional-changelog/commitlint/#what-is-commitlint",
+  helpUrl:
+    "https://github.com/conventional-changelog/commitlint/#what-is-commitlint",
   prompt: {
     messages: {
       skip: ":skip",
@@ -17,7 +31,7 @@ export default {
       min: "%d chars at least",
       emptyWarning: "cannot be empty",
       upperLimitWarning: "over limit",
-      lowerLimitWarning: "below limit"
+      lowerLimitWarning: "below limit",
     },
     questions: {
       type: {
@@ -42,7 +56,9 @@ export default {
       isBreaking: { description: "Are there breaking changes?" },
       breakingBody: { description: "Describe breaking changes in detail" },
       breaking: { description: "Describe the breaking changes" },
-      isIssueAffected: { description: "Does this change affect any open issues?" },
+      isIssueAffected: {
+        description: "Does this change affect any open issues?",
+      },
       issuesBody: { description: "Describe the related issues in detail" },
       issues: { description: 'Add issue references (e.g., "fix #123")' },
     },
