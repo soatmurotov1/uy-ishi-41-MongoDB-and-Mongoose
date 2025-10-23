@@ -17,7 +17,7 @@ export const getAllDeli = async (req, res, next) => {
     const getAllDeli = await delivery_staffModel.find();
     res
       .status(200)
-      .send({ message: `Find all delivery_staff`, data: getAllDeli });
+      .send({ message: `Find all delivery_staff`, count: getAllDeli.length, data: getAllDeli });
   } catch (error) {
     console.log(error);
     next(error);

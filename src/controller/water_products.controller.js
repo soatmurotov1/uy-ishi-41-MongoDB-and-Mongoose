@@ -15,7 +15,7 @@ export const createwater = async (req, res, next) => {
 export const getAllwater = async (req, res, next) => {
   try {
     const getAllwater = await water_productsModel.find();
-    res.status(200).json({ message: `found all water`, data: getAllwater });
+    res.status(200).json({ message: `found all water`, count: getAllwater.length, data: getAllwater });
   } catch (error) {
     console.log(error);
     next(error);

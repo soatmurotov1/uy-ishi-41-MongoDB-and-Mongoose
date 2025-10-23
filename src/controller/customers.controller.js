@@ -13,7 +13,7 @@ export const createCustomers = async (req, res, next) => {
 export const getAllCustomers = async (req, res, next) => {
   try {
     const getcustomer = await customerModel.find();
-    res.status(200).send({ message: `find all customers`, data: getcustomer });
+    res.status(200).send({ message: `find all customers`, count: getcustomer.length, data: getcustomer });
   } catch (error) {
     console.log(error);
     next(error);

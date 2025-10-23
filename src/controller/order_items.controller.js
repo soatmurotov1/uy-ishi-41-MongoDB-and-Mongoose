@@ -15,7 +15,7 @@ export const getAllOrderItem = async (req, res, next) => {
     const getAllOrder_item = await order_itemModel.find();
     res
       .status(200)
-      .json({ message: `found all order_item`, data: getAllOrder_item });
+      .json({ message: `found all order_item`, count: getAllOrderItem.length, data: getAllOrder_item });
   } catch (error) {
     console.log(error);
     next(error);

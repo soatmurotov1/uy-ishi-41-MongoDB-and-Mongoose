@@ -13,7 +13,7 @@ export const createPayments = async (req, res, next) => {
 export const getAllPayments = async (req, res, next) => {
   try {
     const getAllpayment = await paymentModel.find();
-    res.status(200).json({ message: `found all payment`, data: getAllpayment });
+    res.status(200).json({ message: `found all payment`, count: getAllPayments.length, data: getAllpayment });
   } catch (error) {
     console.log(error);
     next(error);

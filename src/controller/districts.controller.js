@@ -15,7 +15,7 @@ export const getAllDistricts = async (req, res, next) => {
     const getAllDistrict = await districtModel.find();
     res
       .status(200)
-      .json({ message: `found all Disrtict`, data: getAllDistrict });
+      .json({ message: `found all Disrtict`, count: getAllDistrict.length, data: getAllDistrict });
   } catch (error) {
     console.log(error);
     next(error);

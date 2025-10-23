@@ -13,7 +13,7 @@ export const createOrder = async (req, res, next) => {
 export const getAllOrder = async (req, res, next) => {
   try {
     const getAllOrder = await orderModel.find();
-    res.status(200).json({ message: `found all Order`, data: getAllOrder });
+    res.status(200).json({ message: `found all Order`, count: getAllOrder.length, data: getAllOrder });
   } catch (error) {
     console.log(error);
     next(error);
