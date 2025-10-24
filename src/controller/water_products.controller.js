@@ -3,9 +3,7 @@ import water_productsModel from "../models/water_products.model.js";
 export const createwater = async (req, res, next) => {
   try {
     const createwater = await water_productsModel.create(req.body);
-    res
-      .status(201)
-      .json({ message: `Created water_product`, data: createwater });
+    res.status(201).json({ message: `Created water_product`, data: createwater });
   } catch (error) {
     console.log(error);
     next(error);
@@ -26,9 +24,7 @@ export const getOnewater = async (req, res, next) => {
   try {
     const getOnewater = await water_productsModel.findById(req.params.id);
     if (!getOnewater) {
-      return res
-        .status(404)
-        .json({ message: `not found ID ${req.params.id} from water` });
+      return res.status(404).json({ message: `not found ID ${req.params.id} from water` });
     }
     res.status(200).json({
       message: `found ID ${req.params.id} from water`,
@@ -48,9 +44,7 @@ export const updatewater = async (req, res, next) => {
       { new: true, runValidators: true },
     );
     if (!updatewater) {
-      return res
-        .status(404)
-        .json({ message: `not found ID ${req.params.id} from water` });
+      return res.status(404).json({ message: `not found ID ${req.params.id} from water` });
     }
     res.status(200).json({ message: `Updated water`, data: updatewater });
   } catch (error) {
@@ -65,9 +59,7 @@ export const deletewater = async (req, res, next) => {
       req.params.id,
     );
     if (!deletewater) {
-      return res
-        .status(404)
-        .json({ message: `not found ID ${req.params.id} from water` });
+      return res.status(404).json({ message: `not found ID ${req.params.id} from water` });
     }
     res.status(200).json({ message: `deleted water ` });
   } catch (error) {

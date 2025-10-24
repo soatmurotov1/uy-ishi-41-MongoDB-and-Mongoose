@@ -11,7 +11,7 @@ const orderItemRouter = Router();
 
 orderItemRouter.post("/", createOrderItem);
 orderItemRouter.get("/", getAllOrderItem);
-orderItemRouter.get("/", getOneOrderItem);
+orderItemRouter.get("/:id", getOneOrderItem);
 orderItemRouter.put("/:id", updateOrderItem);
 orderItemRouter.delete("/:id", deleteOrderItem);
 
