@@ -15,10 +15,6 @@ app.use(cors());
 
 app.use("/", router);
 
-mongoose
-  .connect(mongodb)
-  .then(() => console.log("mongoDB connected"))
-  .catch((error) => console.log("mongoDB connection error:", error.message));
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
