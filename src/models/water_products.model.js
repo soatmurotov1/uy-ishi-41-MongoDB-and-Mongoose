@@ -9,6 +9,6 @@ const water_productsSchema = new Schema(
   { versionKey: false, timestamps: true },
 );
 
-const water_productsModel = model("water_products", water_productsSchema);
+const water_productsModel = model("products", water_productsSchema);
 
-export default water_productsModel;
+export default water_productsModel

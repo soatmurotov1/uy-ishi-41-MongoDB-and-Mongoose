@@ -1,12 +1,22 @@
-export function validation(schema) {
-  return (req, res, next) => {
-    const result = schema.safeParse(req.body)
+import { ZodError } from "zod"
 
-    if (!result.success) {
-      return res.status(400).json({message: "Validation xatosi", errors: result.error.errors })
+export const validation = (schema) => (req, res, next) => {
+  try {
+    const validatedData = schema.parse(req.body);
+    req.validatedData = validatedData;
+    next();
+  } catch (error) {
+    if (error instanceof ZodError) {
+      const errors = error.errors.map((err) => ({
+        path: err.path.join("."),
+        message: err.message,
+      }));
+
+      return res.status(400).json({
+        message: "Validation xatosi",
+        errors,
+      })
     }
-
-    req.validatedData = result.data
-    next()
+    next(error)
   }
-}
+};

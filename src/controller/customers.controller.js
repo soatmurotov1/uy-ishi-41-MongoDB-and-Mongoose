@@ -13,7 +13,11 @@ export const createCustomers = async (req, res, next) => {
 export const getAllCustomers = async (req, res, next) => {
   try {
     const getcustomer = await customerModel.find();
-    res.status(200).send({ message: `find all customers`, count: getcustomer.length, data: getcustomer });
+    res.status(200).send({
+      message: `find all customers`,
+      count: getcustomer.length,
+      data: getcustomer,
+    });
   } catch (error) {
     console.log(error);
     next(error);
@@ -24,7 +28,9 @@ export const getOneCustomers = async (req, res, next) => {
   try {
     const getOneCustomers = await customerModel.findById(req.params.id);
     if (!getOneCustomers) {
-      return res.status(404).send({ message: `not found ID ${req.params.id} from Customers` });
+      return res
+        .status(404)
+        .send({ message: `not found ID ${req.params.id} from Customers` });
     }
     res.status(200).send({ message: `find customer`, data: getOneCustomers });
   } catch (error) {
@@ -57,9 +63,13 @@ export const deleteCustomer = async (req, res, next) => {
   try {
     const deleteCustomer = await customerModel.findByIdAndDelete(req.params.id);
     if (!deleteCustomer) {
-      return res.status(404).send({ message: `Not found ID ${req.params.id} from Customers` });
+      return res
+        .status(404)
+        .send({ message: `Not found ID ${req.params.id} from Customers` });
     }
-    res.status(200).send({ message: `Deleted customer ID ${req.params.id} from Customers` });
+    res
+      .status(200)
+      .send({ message: `Deleted customer ID ${req.params.id} from Customers` });
   } catch (error) {
     console.log(error);
     next(error);

@@ -1,17 +1,19 @@
-import jwt from "jsonwebtoken"
+import jwt from 'jsonwebtoken';
 
-const secret = "qwer123"
-const command = process.argv[2] || "default_user"
 
-const options = { expiresIn: `20s` }
+export const generateToken = (payload, secret, expiresIn) => {
+  return new Promise((resolve, reject) => {
+    jwt.sign(payload, secret, { expiresIn }, (err, token) => {
+      if (err) reject(err);
+      else resolve(token);
+    });
+  });
+};
 
-const payload = {
-  name: "Alibek",
-  age: 20,
-  location: "Tashkent",
-  user: command
-}
-
-const token = jwt.sign(payload, secret, options)
-
-console.log("Generated Token:", token)
+export const verifyToken = (token, secret) => {
+  try {
+    return jwt.verify(token, secret);
+  } catch (error) {
+    return null
+  }
+};

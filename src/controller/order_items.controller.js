@@ -14,7 +14,11 @@ export const createOrderItem = async (req, res, next) => {
 export const getAllOrderItem = async (req, res, next) => {
   try {
     const getAllOrder_item = await order_itemModel.find();
-    res.status(200).json({ message: `found all order_item`, count: getAllOrder_item.length, data: getAllOrder_item });
+    res.status(200).json({
+      message: `found all order_item`,
+      count: getAllOrder_item.length,
+      data: getAllOrder_item,
+    });
   } catch (error) {
     console.log(error);
     next(error);
@@ -25,7 +29,9 @@ export const getOneOrderItem = async (req, res, next) => {
   try {
     const getOneOrderItem = await order_itemModel.findById(req.params.id);
     if (!getOneOrderItem) {
-      return res.status(404).json({ message: `not found ID ${req.params.id} from orderItem` });
+      return res
+        .status(404)
+        .json({ message: `not found ID ${req.params.id} from orderItem` });
     }
     res.status(200).json({
       message: `found ID ${req.params.id} from order_item`,
@@ -45,7 +51,9 @@ export const updateOrderItem = async (req, res, next) => {
       { new: true, runValidators: true },
     );
     if (!updateOrder_item) {
-      return res.status(404).json({ message: `not found ID ${req.params.id} from order_item` });
+      return res
+        .status(404)
+        .json({ message: `not found ID ${req.params.id} from order_item` });
     }
     res.status(200).json({ message: `Updated order`, data: updateOrder_item });
   } catch (error) {
@@ -60,7 +68,9 @@ export const deleteOrderItem = async (req, res, next) => {
       req.params.id,
     );
     if (!deleteOrder_item) {
-      return res.status(404).json({ message: `not found ID ${req.params.id} from order_item` });
+      return res
+        .status(404)
+        .json({ message: `not found ID ${req.params.id} from order_item` });
     }
     res.status(200).json({ message: `deleted order_item ` });
   } catch (error) {

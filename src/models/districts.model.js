@@ -10,3 +10,4 @@ const districtsSchema = new mongoose.Schema(
 const districtModel = model("districts", districtsSchema);
 
 export default districtModel;
+

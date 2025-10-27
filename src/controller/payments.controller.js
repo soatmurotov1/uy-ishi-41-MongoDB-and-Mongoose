@@ -13,7 +13,11 @@ export const createPayments = async (req, res, next) => {
 export const getAllPayments = async (req, res, next) => {
   try {
     const getAllpayment = await paymentModel.find();
-    res.status(200).json({ message: `found all payment`, count: getAllpayment.length, data: getAllpayment });
+    res.status(200).json({
+      message: `found all payment`,
+      count: getAllpayment.length,
+      data: getAllpayment,
+    });
   } catch (error) {
     console.log(error);
     next(error);
@@ -24,7 +28,9 @@ export const getOnePayments = async (req, res, next) => {
   try {
     const getOnepayment = await paymentModel.findById(req.params.id);
     if (!getOnepayment) {
-      return res.status(404).json({ message: `not found ID ${req.params.id} from payment` });
+      return res
+        .status(404)
+        .json({ message: `not found ID ${req.params.id} from payment` });
     }
     res.status(200).json({
       message: `found ID ${req.params.id} from payment`,
@@ -44,7 +50,9 @@ export const updatePayments = async (req, res, next) => {
       { new: true, runValidators: true },
     );
     if (!updatepayment) {
-      return res.status(404).json({ message: `not found ID ${req.params.id} from payment` });
+      return res
+        .status(404)
+        .json({ message: `not found ID ${req.params.id} from payment` });
     }
     res.status(200).json({ message: `Updated payment`, data: updatepayment });
   } catch (error) {
@@ -57,7 +65,9 @@ export const deletePayments = async (req, res, next) => {
   try {
     const deletepayment = await paymentModel.findByIdAndDelete(req.params.id);
     if (!deletepayment) {
-      return res.status(404).json({ message: `not found ID ${req.params.id} from payment` });
+      return res
+        .status(404)
+        .json({ message: `not found ID ${req.params.id} from payment` });
     }
     res.status(200).json({ message: `deleted payment ` });
   } catch (error) {
