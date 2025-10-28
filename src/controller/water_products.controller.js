@@ -1,20 +1,19 @@
-import water_productsModel from "../models/water_products.model.js";
+import productsModel from "../models/water_products.model.js";
 
-export const createwater = async (req, res, next) => {
+export const create = async (req, res, next) => {
   try {
-    const createwater = await water_productsModel.create(req.body);
-    res
-      .status(201)
-      .json({ message: `Created water_product`, data: createwater });
+    const createwater = await water_productsModel.create(req.validatedData);
+    
+    res.status(201).json({ message: `Created water_product`, data: createwater });
   } catch (error) {
     console.log(error);
     next(error);
   }
 };
 
-export const getAllwater = async (req, res, next) => {
+export const getAll = async (req, res, next) => {
   try {
-    const getAllwater = await water_productsModel.find();
+    const getAllwater = await productsModel.find();
     res.status(200).json({
       message: `found all water`,
       count: getAllwater.length,
@@ -26,9 +25,9 @@ export const getAllwater = async (req, res, next) => {
   }
 };
 
-export const getOnewater = async (req, res, next) => {
+export const getOne = async (req, res, next) => {
   try {
-    const getOnewater = await water_productsModel.findById(req.params.id);
+    const getOnewater = await productsModel.findById(req.params.id);
     if (!getOnewater) {
       return res.status(404).json({ message: `not found ID ${req.params.id} from water`});
     }
@@ -41,9 +40,9 @@ export const getOnewater = async (req, res, next) => {
   }
 };
 
-export const updatewater = async (req, res, next) => {
+export const update = async (req, res, next) => {
   try {
-    const updatewater = await water_productsModel.findByIdAndUpdate(
+    const updatewater = await productsModel.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true, runValidators: true },
@@ -60,9 +59,9 @@ export const updatewater = async (req, res, next) => {
   }
 };
 
-export const deletewater = async (req, res, next) => {
+export const deleted = async (req, res, next) => {
   try {
-    const deletewater = await water_productsModel.findByIdAndDelete(
+    const deletewater = await productsModel.findByIdAndDelete(
       req.params.id,
     );
     if (!deletewater) {

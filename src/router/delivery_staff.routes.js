@@ -1,15 +1,17 @@
-import express, { Router } from "express";
-import { createDeli, getAllDeli, getOneDeli, updateDeli, deleteDeli } from "../controller/delivery_straff.controller.js";
-import { delivery_straffValidation } from "../validation/delivery_staff.validation.js";
+import { Router } from "express";
 import { validation } from "../middleware/validation.js";
+import { authGuard, roleGuard } from "../middleware/guard.middleware.js";
+import { delivery_straffValidation } from "../validation/delivery_staff.validation.js";
+import { create, getAll, getOne, update, deleted } from "../controller/delivery_straff.controller.js";
 
 
-const deliRouter = Router();
+const deliRouter = Router()
 
-deliRouter.post("/",validation(delivery_straffValidation), createDeli);
-deliRouter.get("/", getAllDeli);
-deliRouter.get("/:id", getOneDeli);
-deliRouter.put("/:id",validation(delivery_straffValidation), updateDeli);
-deliRouter.delete("/:id", deleteDeli);
 
-export default deliRouter;
+deliRouter.post("/", authGuard, roleGuard("admin", "manager"), validation(delivery_straffValidation), create)
+deliRouter.get("/", authGuard, roleGuard("admin", "manager", "staff"), getAll)
+deliRouter.get("/:id", authGuard, roleGuard("admin", "manager", "staff"), getOne)
+deliRouter.put("/:id", authGuard, roleGuard("admin", "manager"), validation(delivery_straffValidation), update)
+deliRouter.delete("/:id", authGuard, roleGuard("admin"), deleted)
+
+export default deliRouter

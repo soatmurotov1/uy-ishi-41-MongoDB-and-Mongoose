@@ -1,8 +1,8 @@
 import customerModel from "../models/customers.model.js";
 
-export const createCustomers = async (req, res, next) => {
+export const create = async (req, res, next) => {
   try {
-    const newCustomers = await customerModel.create(req.body);
+    const newCustomers = await customerModel.create(req.validatedData);
     res.status(201).send({ message: `create customers`, data: newCustomers });
   } catch (error) {
     console.log(error);
@@ -10,7 +10,7 @@ export const createCustomers = async (req, res, next) => {
   }
 };
 
-export const getAllCustomers = async (req, res, next) => {
+export const getAll = async (req, res, next) => {
   try {
     const getcustomer = await customerModel.find();
     res.status(200).send({
@@ -24,7 +24,7 @@ export const getAllCustomers = async (req, res, next) => {
   }
 };
 
-export const getOneCustomers = async (req, res, next) => {
+export const getOne = async (req, res, next) => {
   try {
     const getOneCustomers = await customerModel.findById(req.params.id);
     if (!getOneCustomers) {
@@ -39,7 +39,7 @@ export const getOneCustomers = async (req, res, next) => {
   }
 };
 
-export const updateCustomers = async (req, res, next) => {
+export const update = async (req, res, next) => {
   try {
     const updateCustomer = await customerModel.findByIdAndUpdate(
       req.params.id,
@@ -59,7 +59,7 @@ export const updateCustomers = async (req, res, next) => {
   }
 };
 
-export const deleteCustomer = async (req, res, next) => {
+export const deleted = async (req, res, next) => {
   try {
     const deleteCustomer = await customerModel.findByIdAndDelete(req.params.id);
     if (!deleteCustomer) {

@@ -7,23 +7,9 @@ import orderItemRouter from "./order_items.routes.js";
 import orderRouter from "./orders.routes.js";
 import paymentsRouter from "./payments.routes.js";
 import waterRouter from "./water_products.routes.js";
-import { loginStaff, profileStaff, refreshAccessStaff, registerCustomer, loginCustomer, profileCustomer, refreshAccessCustomer, registerStaff } from "../controller/auth.controller.js";
-import { validation } from "../middleware/validation.js";
-import { customerRegisterSchema } from "../middleware/auth.validation.js";
 
 
-const router = Router();
-
-
-router.post("/customer/register",validation(customerRegisterSchema), registerCustomer)
-router.post("/customer/login",validation(customerRegisterSchema), loginCustomer)
-router.post("/customer/profile", profileCustomer)
-router.post("/customer/refresh", refreshAccessCustomer)
-
-router.post("/staff/register", registerStaff)
-router.post("/staff/login", loginStaff)
-router.post("/staff/profile", profileStaff)
-router.post("/staff/refresh", refreshAccessStaff)
+const router =Router()
 
 router.use("/customers", customersRouter);
 router.use("/districts", districtsRouter);

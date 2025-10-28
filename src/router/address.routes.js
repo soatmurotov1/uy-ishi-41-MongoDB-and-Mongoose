@@ -1,13 +1,17 @@
-import express, { Router } from "express";
-import { createAddress, getAllAddress, getOneAddress, updateAddress, deleteAddress } from "../controller/address.controller.js";
-import { addressValidation } from "../validation/address.validation.js";
+import { Router } from "express";
 import { validation } from "../middleware/validation.js";
-const addressRouter = Router();
+import { authGuard, roleGuard } from "../middleware/guard.middleware.js";
+import { addressValidation } from "../validation/address.validation.js";
+import { create, getAll, getOne, update, deleted } from "../controller/address.controller.js";
 
-addressRouter.post("/",validation(addressValidation), createAddress);
-addressRouter.get("/", getAllAddress);
-addressRouter.get("/:id", getOneAddress);
-addressRouter.put("/:id",validation(addressValidation), updateAddress);
-addressRouter.delete("/:id", deleteAddress);
 
-export default addressRouter;
+const addressRouter = Router()
+
+
+addressRouter.post("/", authGuard, roleGuard("customer", "manager"), validation(addressValidation), create)
+addressRouter.get("/", authGuard, roleGuard("admin", "manager", "customer", "staff"), getAll)
+addressRouter.get("/:id", authGuard, roleGuard("admin", "manager", "customer", "staff"), getOne)
+addressRouter.put("/:id", authGuard, roleGuard("customer", "manager"), validation(addressValidation), update)
+addressRouter.delete("/:id", authGuard, roleGuard("manager", "admin"), deleted)
+
+export default addressRouter

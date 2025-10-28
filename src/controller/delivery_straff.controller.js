@@ -1,8 +1,8 @@
 import delivery_staffModel from "../models/delivery_staff.model.js";
 
-export const createDeli = async (req, res, next) => {
+export const create = async (req, res, next) => {
   try {
-    const createDeli = await delivery_staffModel.create(req.body);
+    const createDeli = await delivery_staffModel.create(req.validatedData);
     res
       .status(201)
       .send({ message: `Created delivery_staff`, data: createDeli });
@@ -12,7 +12,7 @@ export const createDeli = async (req, res, next) => {
   }
 };
 
-export const getAllDeli = async (req, res, next) => {
+export const getAll = async (req, res, next) => {
   try {
     const getAllDeli = await delivery_staffModel.find();
     res.status(200).send({
@@ -26,7 +26,7 @@ export const getAllDeli = async (req, res, next) => {
   }
 };
 
-export const getOneDeli = async (req, res, next) => {
+export const getOne = async (req, res, next) => {
   try {
     const getOneDeli = await delivery_staffModel.findById(req.params.id);
     if (!getAllDeli) {
@@ -44,7 +44,7 @@ export const getOneDeli = async (req, res, next) => {
   }
 };
 
-export const updateDeli = async (req, res, next) => {
+export const update = async (req, res, next) => {
   try {
     const updateDeli = await delivery_staffModel.findByIdAndUpdate(
       req.params.id,
@@ -66,7 +66,7 @@ export const updateDeli = async (req, res, next) => {
   }
 };
 
-export const deleteDeli = async (req, res, next) => {
+export const deleted = async (req, res, next) => {
   try {
     const deleteDeli = await delivery_staffModel.findByIdAndDelete(
       req.params.id,

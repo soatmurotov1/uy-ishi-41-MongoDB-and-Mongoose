@@ -1,8 +1,8 @@
 import orderModel from "../models/orders.model.js";
 
-export const createOrder = async (req, res, next) => {
+export const create = async (req, res, next) => {
   try {
-    const createOrder = await orderModel.create(req.body);
+    const create = await orderModel.create(req.validatedData);
     res.status(201).send({ message: `Created order`, data: createOrder });
   } catch (error) {
     console.log(error);
@@ -10,7 +10,7 @@ export const createOrder = async (req, res, next) => {
   }
 };
 
-export const getAllOrder = async (req, res, next) => {
+export const getAll = async (req, res, next) => {
   try {
     const getAllOrder = await orderModel.find();
     res.status(200).json({
@@ -24,7 +24,7 @@ export const getAllOrder = async (req, res, next) => {
   }
 };
 
-export const getOneOrder = async (req, res, next) => {
+export const getOne = async (req, res, next) => {
   try {
     const getOneOrder = await orderModel.findById(req.params.id);
     if (!getOneOrder) {
@@ -42,7 +42,7 @@ export const getOneOrder = async (req, res, next) => {
   }
 };
 
-export const updateOrder = async (req, res, next) => {
+export const update = async (req, res, next) => {
   try {
     const updateOrder = await orderModel.findByIdAndUpdate(
       req.params.id,
@@ -61,7 +61,7 @@ export const updateOrder = async (req, res, next) => {
   }
 };
 
-export const deleteOrder = async (req, res, next) => {
+export const deleted = async (req, res, next) => {
   try {
     const deleteOrder = await orderModel.findByIdAndDelete(req.params.id);
     if (!deleteOrder) {
@@ -69,9 +69,9 @@ export const deleteOrder = async (req, res, next) => {
         .status(404)
         .json({ message: `not found ID ${req.params.id} from order` });
     }
-    res.status(200).json({ message: `deleted order ` });
+    res.status(200).json({ message: `deleted order` });
   } catch (error) {
-    console.log(error);
-    next(error);
+    console.log(error)
+    next(error)
   }
 };

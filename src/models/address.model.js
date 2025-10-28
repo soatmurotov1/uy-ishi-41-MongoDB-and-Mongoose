@@ -16,7 +16,7 @@ const addressSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { versionKey: false, timestamps: true },
+  { timestamps: true },
 );
 
 const addressModel = model("address", addressSchema);

@@ -1,8 +1,8 @@
 import districtModel from "../models/districts.model.js";
 
-export const createDistricts = async (req, res, next) => {
+export const create = async (req, res, next) => {
   try {
-    const createDistrict = await districtModel.create(req.body);
+    const createDistrict = await districtModel.create(req.validatedData);
     res.status(201).send({ message: `Created district`, data: createDistrict });
   } catch (error) {
     console.log(error);
@@ -10,7 +10,7 @@ export const createDistricts = async (req, res, next) => {
   }
 };
 
-export const getAllDistricts = async (req, res, next) => {
+export const getAll = async (req, res, next) => {
   try {
     const getAllDistrict = await districtModel.find();
     res.status(200).json({
@@ -24,7 +24,7 @@ export const getAllDistricts = async (req, res, next) => {
   }
 };
 
-export const getOneDistricts = async (req, res, next) => {
+export const getOne = async (req, res, next) => {
   try {
     const getOneDistrict = await districtModel.findById(req.params.id);
     if (!getOneDistrict) {
@@ -42,7 +42,7 @@ export const getOneDistricts = async (req, res, next) => {
   }
 };
 
-export const updateDistricts = async (req, res, next) => {
+export const update = async (req, res, next) => {
   try {
     const updateDistrict = await districtModel.findByIdAndUpdate(
       req.params.id,
@@ -61,7 +61,7 @@ export const updateDistricts = async (req, res, next) => {
   }
 };
 
-export const deleteDistricts = async (req, res, next) => {
+export const deleted = async (req, res, next) => {
   try {
     const deleteDistrict = await districtModel.findByIdAndDelete(req.params.id);
     if (!deleteDistrict) {

@@ -1,15 +1,17 @@
-import express, { Router } from "express";
-import { createOrderItem, getAllOrderItem, getOneOrderItem, updateOrderItem, deleteOrderItem } from "../controller/order_items.controller.js";
-import { order_itemsValidation } from "../validation/order_items.validation.js";
+import { Router } from "express";
 import { validation } from "../middleware/validation.js";
+import { authGuard, roleGuard } from "../middleware/guard.middleware.js";
+import { order_itemsValidation } from "../validation/order_items.validation.js";
+import { create, getAll, getOne, update, deleted } from "../controller/order_items.controller.js";
 
 
 const orderItemRouter = Router();
 
-orderItemRouter.post("/",validation(order_itemsValidation), createOrderItem);
-orderItemRouter.get("/", getAllOrderItem);
-orderItemRouter.get("/:id", getOneOrderItem);
-orderItemRouter.put("/:id",validation(order_itemsValidation), updateOrderItem);
-orderItemRouter.delete("/:id", deleteOrderItem);
 
-export default orderItemRouter;
+orderItemRouter.post("/", authGuard, roleGuard("staff", "manager"), validation(order_itemsValidation), create)
+orderItemRouter.get("/", authGuard, roleGuard("staff", "manager", "admin", "customer"), getAll)
+orderItemRouter.get("/:id", authGuard, roleGuard("staff", "manager", "admin", "customer"), getOne)
+orderItemRouter.put("/:id", authGuard, roleGuard("staff", "manager"), validation(order_itemsValidation), update)
+orderItemRouter.delete("/:id", authGuard, roleGuard("manager", "admin"), deleted)
+
+export default orderItemRouter

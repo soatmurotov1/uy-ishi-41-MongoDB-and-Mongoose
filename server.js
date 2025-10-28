@@ -1,17 +1,19 @@
 import express from "express";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import router from "./src/router/index.js";
+import { errorHandler } from "./src/middleware/errorHeander.js";
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 4000;
-const mongodb = process.env.MONGO_URL;
+const PORT = process.env.PORT || 4000
+const mongodb = process.env.MONGO_URL
 
-app.use(express.json());
+app.use(express.json())
 app.use(cors());
+app.use(errorHandler)
+
 
 app.use("/", router);
 

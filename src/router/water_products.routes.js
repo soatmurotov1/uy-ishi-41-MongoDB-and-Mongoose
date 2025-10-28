@@ -1,14 +1,18 @@
-import express, { Router } from "express";
-import { createwater, getAllwater, getOnewater, updatewater, deletewater } from "../controller/water_products.controller.js";
+import { Router } from "express";
 import { validation } from "../middleware/validation.js";
+import { authGuard, roleGuard } from "../middleware/guard.middleware.js";
 import { productValidation } from "../validation/water_products.validation.js";
+import { create, getAll, getOne, update, deleted } from "../controller/water_products.controller.js";
+
 
 const waterRouter = Router();
 
-waterRouter.post("/",validation(productValidation), createwater);
-waterRouter.get("/", getAllwater);
-waterRouter.get("/:id", getOnewater);
-waterRouter.put("/:id",validation(productValidation), updatewater);
-waterRouter.delete("/:id", deletewater);
 
-export default waterRouter;
+waterRouter.post("/", authGuard, roleGuard("admin", "manager"), validation(productValidation), create)
+waterRouter.get("/", authGuard, roleGuard("admin", "manager", "user", "customer", "staff"), getAll)
+waterRouter.get("/:id", authGuard, roleGuard("admin", "manager", "user", "customer", "staff"), getOne)
+waterRouter.put("/:id", authGuard, roleGuard("admin", "manager"), validation(productValidation), update)
+waterRouter.delete("/:id", authGuard, roleGuard("admin", "manager"), deleted)
+
+
+export default waterRouter

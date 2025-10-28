@@ -1,6 +1,7 @@
+import mongoose from "mongoose";
 import { Schema, model } from "mongoose";
 
-const orderSchema = new Schema(
+const orderSchema = new mongoose.Schema(
   {
     customer_id: {
       type: Schema.Types.ObjectId,
@@ -19,9 +20,9 @@ const orderSchema = new Schema(
       default: "pending",
     },
   },
-  { versionKey: false, timestamps: true },
+  { timestamps: true },
 );
 
-const orderModel = model("orders", orderSchema);
+const orderModel = model("order", orderSchema);
 
 export default orderModel;

@@ -1,8 +1,8 @@
 import addressModel from "../models/address.model.js";
 
-export const createAddress = async (req, res, next) => {
+export const create = async (req, res, next) => {
   try {
-    const newAddress = await addressModel.create(req.body);
+    const newAddress = await addressModel.create(req.validatedData);
     res.status(201).send({ message: `Addres created`, data: newAddress });
   } catch (error) {
     console.log(error);
@@ -10,7 +10,7 @@ export const createAddress = async (req, res, next) => {
   }
 };
 
-export const getAllAddress = async (req, res, next) => {
+export const getAll = async (req, res, next) => {
   try {
     const getAddress = await addressModel.find();
     res.status(200).send({
@@ -24,7 +24,7 @@ export const getAllAddress = async (req, res, next) => {
   }
 };
 
-export const getOneAddress = async (req, res, next) => {
+export const getOne = async (req, res, next) => {
   try {
     const getAddress = await addressModel.findById(req.params.id);
     if (!getAddress) {
@@ -37,11 +37,11 @@ export const getOneAddress = async (req, res, next) => {
   }
 };
 
-export const updateAddress = async (req, res, next) => {
+export const update = async (req, res, next) => {
   try {
     const address = await addressModel.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      req.validatedData,
       { new: true, runValidators: true },
     );
 
@@ -55,7 +55,7 @@ export const updateAddress = async (req, res, next) => {
   }
 };
 
-export const deleteAddress = async (req, res, next) => {
+export const deleted = async (req, res, next) => {
   try {
     const address = await addressModel.findByIdAndDelete(req.params.id);
     if (!address) {

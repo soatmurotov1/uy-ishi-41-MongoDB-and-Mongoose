@@ -1,8 +1,8 @@
 import paymentModel from "../models/payments.model.js";
 
-export const createPayments = async (req, res, next) => {
+export const create = async (req, res, next) => {
   try {
-    const createpayment = await paymentModel.create(req.body);
+    const createpayment = await paymentModel.create(req.validatedData);
     res.status(201).send({ message: `Created payment`, data: createpayment });
   } catch (error) {
     console.log(error);
@@ -10,7 +10,7 @@ export const createPayments = async (req, res, next) => {
   }
 };
 
-export const getAllPayments = async (req, res, next) => {
+export const getAll = async (req, res, next) => {
   try {
     const getAllpayment = await paymentModel.find();
     res.status(200).json({
@@ -24,7 +24,7 @@ export const getAllPayments = async (req, res, next) => {
   }
 };
 
-export const getOnePayments = async (req, res, next) => {
+export const getOne = async (req, res, next) => {
   try {
     const getOnepayment = await paymentModel.findById(req.params.id);
     if (!getOnepayment) {
@@ -42,7 +42,7 @@ export const getOnePayments = async (req, res, next) => {
   }
 };
 
-export const updatePayments = async (req, res, next) => {
+export const update = async (req, res, next) => {
   try {
     const updatepayment = await paymentModel.findByIdAndUpdate(
       req.params.id,
@@ -61,7 +61,7 @@ export const updatePayments = async (req, res, next) => {
   }
 };
 
-export const deletePayments = async (req, res, next) => {
+export const deleted = async (req, res, next) => {
   try {
     const deletepayment = await paymentModel.findByIdAndDelete(req.params.id);
     if (!deletepayment) {

@@ -1,9 +1,9 @@
 import order_itemModel from "../models/order_items.model.js";
-import { getAllOrder } from "./orders.controller.js";
 
-export const createOrderItem = async (req, res, next) => {
+
+export const create = async (req, res, next) => {
   try {
-    const createOrder = await order_itemModel.create(req.body);
+    const createOrder = await order_itemModel.create(req.validatedData);
     res.status(201).send({ message: `Created order_item`, data: createOrder });
   } catch (error) {
     console.log(error);
@@ -11,7 +11,7 @@ export const createOrderItem = async (req, res, next) => {
   }
 };
 
-export const getAllOrderItem = async (req, res, next) => {
+export const getAll = async (req, res, next) => {
   try {
     const getAllOrder_item = await order_itemModel.find();
     res.status(200).json({
@@ -25,7 +25,7 @@ export const getAllOrderItem = async (req, res, next) => {
   }
 };
 
-export const getOneOrderItem = async (req, res, next) => {
+export const getOne = async (req, res, next) => {
   try {
     const getOneOrderItem = await order_itemModel.findById(req.params.id);
     if (!getOneOrderItem) {
@@ -43,7 +43,7 @@ export const getOneOrderItem = async (req, res, next) => {
   }
 };
 
-export const updateOrderItem = async (req, res, next) => {
+export const update = async (req, res, next) => {
   try {
     const updateOrder_item = await order_itemModel.findByIdAndUpdate(
       req.params.id,
@@ -62,7 +62,7 @@ export const updateOrderItem = async (req, res, next) => {
   }
 };
 
-export const deleteOrderItem = async (req, res, next) => {
+export const deleted = async (req, res, next) => {
   try {
     const deleteOrder_item = await order_itemModel.findByIdAndDelete(
       req.params.id,

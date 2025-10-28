@@ -4,7 +4,7 @@ const districtsSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
   },
-  { versionKey: false, timestamps: true },
+  { timestamps: true },
 );
 
 const districtModel = model("districts", districtsSchema);
