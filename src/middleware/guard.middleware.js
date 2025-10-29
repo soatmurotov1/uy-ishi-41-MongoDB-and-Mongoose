@@ -1,38 +1,38 @@
-import { verifyToken } from "../helper/jwt.js";
 import { config } from "../config/index.js";
-import customerModel from "../models/customers.model.js";
+import { verifyToken } from "../helper/jwt.js";
 
-
-export const authGuard = async (req, res, next) => {
+export const authGuard = (req, res, next) => {
   try {
-    const header = req.headers.authorization;
-    if (!header || !header.startsWith("Bearer "))
-      return res.status(401).json({ success: false, message: "token not found" });
+    const authHeader = req.headers["authorization"]
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Token mavjud emas yoki xato format" });
+    }
 
-    const token = header.split(" ")[1];
-    const decoded = verifyToken(token, config.jwt.accessSecret);
-    if (!decoded)
-      return res.status(401).json({ success: false, message: "Token yaroqsiz yoki muddati tugagan" });
+    const token = authHeader.split(" ")[1];
+    const validToken = verifyToken(token, config.jwt.accessSecret);
 
-    const user = await customerModel.findById(decoded.id).select("-password");
-    if (!user)
-      return res.status(404).json({ success: false, message: "user not found" });
+    if (!validToken) {
+      return res.status(401).json({ message: "Token yaroqsiz yoki muddati tugagan" });
+    }
 
-    req.user = user;
+    req.user = validToken
     next();
   } catch (error) {
-    next(error);
+    console.error("AuthGuard error:", error);
+    return res.status(500).json({ message: "Server xatosi auth tekshiruvda" });
   }
 };
 
 export const roleGuard = (...allowedRoles) => {
   return (req, res, next) => {
-    if (!allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({
-        success: false,
-        message: "Sizda bu amalni bajarishga ruxsat yo'q",
-      });
+    if (!req.user) {
+      return res.status(401).json({ message: "Token mavjud emas yoki xato" });
     }
-    next();
+
+    const userRole = req.user.role;
+    if (!allowedRoles.includes(userRole)) {
+      return res.status(403).json({ message: "Sizning ushbu yo'nalishga kirishga ruxsatingiz yo'q" })
+    }
+    next()
   };
 };

@@ -43,7 +43,7 @@ export const update = async (req, res, next) => {
   try {
     const updateCustomer = await customerModel.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      req.validatedData,
       { new: true, runValidators: true },
     );
     if (!updateCustomer) {

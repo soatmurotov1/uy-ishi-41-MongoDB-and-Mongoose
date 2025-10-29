@@ -8,7 +8,7 @@ import { create, getAll, getOne, update, deleted } from "../controller/delivery_
 const deliRouter = Router()
 
 
-deliRouter.post("/", authGuard, roleGuard("admin", "manager"), validation(delivery_straffValidation), create)
+deliRouter.post("/", roleGuard("admin", "manager"), validation(delivery_straffValidation), create)
 deliRouter.get("/", authGuard, roleGuard("admin", "manager", "staff"), getAll)
 deliRouter.get("/:id", authGuard, roleGuard("admin", "manager", "staff"), getOne)
 deliRouter.put("/:id", authGuard, roleGuard("admin", "manager"), validation(delivery_straffValidation), update)

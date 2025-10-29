@@ -1,18 +1,14 @@
 import { Router } from "express";
-import { validation } from "../middleware/validation.js";
 import { authGuard, roleGuard } from "../middleware/guard.middleware.js";
-import { orderValidation } from "../validation/orders.validation.js";
-import { create, getAll, getOne, update, deleted } from "../controller/orders.controller.js";
+import { create, getOne, getAll, update, deleted } from "../controller/orders.controller.js";
 
 
-const orderRouter = Router();
+const router = Router();
 
+router.post("/", roleGuard("customer"), create);
+router.get("/", authGuard, roleGuard("customer","admin","manager"), getAll);
+router.get("/:id", authGuard, roleGuard("customer","admin","manager"), getOne);
+router.put("/:id", authGuard, roleGuard("admin"), update);
+router.delete("/:id", authGuard, roleGuard("admin"), deleted);
 
-orderRouter.post("/", authGuard, roleGuard("customer"), validation(orderValidation), create)
-orderRouter.get("/", authGuard, roleGuard("staff", "manager", "admin", "customer"), getAll)
-orderRouter.get("/:id", authGuard, roleGuard("staff", "manager", "admin", "customer"), getOne)
-orderRouter.put("/:id", authGuard, roleGuard("customer"), validation(orderValidation), update)
-orderRouter.delete("/:id", authGuard, roleGuard("customer"), deleted)
-
-
-export default orderRouter
+export default router;

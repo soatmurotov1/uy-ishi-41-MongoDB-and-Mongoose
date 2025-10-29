@@ -15,8 +15,6 @@ app.use(express.json());
 app.use(cors());
 
 mongoose.connect(mongodb)
-  .then(() => console.log("mongodb connected"))
-  .catch((err) => console.log("mongodb connection error:", err.message));
 
 app.use("/", router);
 

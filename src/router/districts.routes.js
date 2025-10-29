@@ -8,7 +8,7 @@ import { create, getAll, getOne, update, deleted } from "../controller/districts
 const districtsRouter = Router()
 
 
-districtsRouter.post("/", authGuard, roleGuard("admin", "manager"), validation(districtsValidation), create)
+districtsRouter.post("/", roleGuard("admin", "manager"), validation(districtsValidation), create)
 districtsRouter.get("/", authGuard, roleGuard("admin", "manager", "staff", "customer", "user"), getAll)
 districtsRouter.get("/:id", authGuard, roleGuard("admin", "manager", "staff", "customer", "user"), getOne)
 districtsRouter.put("/:id", authGuard, roleGuard("admin", "manager"), validation(districtsValidation), update)
