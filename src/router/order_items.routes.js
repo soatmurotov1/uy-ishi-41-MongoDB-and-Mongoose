@@ -8,7 +8,7 @@ import { create, getAll, getOne, update, deleted } from "../controller/order_ite
 const orderItemRouter = Router();
 
 
-orderItemRouter.post("/", authGuard, roleGuard("staff", "manager"), validation(order_itemsValidation), create)
+orderItemRouter.post("/", roleGuard("staff", "manager"), validation(order_itemsValidation), create)
 orderItemRouter.get("/", authGuard, roleGuard("staff", "manager", "admin", "customer"), getAll)
 orderItemRouter.get("/:id", authGuard, roleGuard("staff", "manager", "admin", "customer"), getOne)
 orderItemRouter.put("/:id", authGuard, roleGuard("staff", "manager"), validation(order_itemsValidation), update)
