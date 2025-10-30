@@ -10,7 +10,7 @@ const router = Router();
 router.post("/", validation(customerValidation), registerUser);
 router.get("/profile", authGuard, roleGuard("customer","admin","manager"), profileUser);
 router.get("/", authGuard, roleGuard("admin","manager"), getAllUsers)
-router.put("/:id", authGuard, roleGuard("admin"), updateUser, customerUpdValidation);
+router.put("/:id", authGuard, roleGuard("admin"), validation(customerUpdValidation), updateUser);
 router.delete("/:id", authGuard, roleGuard("admin"), deleteUser);
 router.post("/login", loginUser)
 router.post("/refresh", refreshAccessToken);
