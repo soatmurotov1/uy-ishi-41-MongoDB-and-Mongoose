@@ -11,9 +11,9 @@ export const registerValidate = z.object({
 export const loginValidate = z.object({
   email: z.string().email(),
   password: z.string().min(6),
-  role: z.enum(["admin", "manager", "staff", "customer", "user"]),
+  role: z.enum(["admin", "manager", "staff", "customer", "user"]).optional(),
 });
 
 export const refreshValidate = z.object({
   refreshToken: z.string().min(10),
-});
+})

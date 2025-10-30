@@ -9,3 +9,11 @@ export const addressValidation = z.object({
 }); 
 
 
+
+export const addressValidationUpd = z.object({
+  customer_id: z.string().length(24, { message: "customer_id 24 ta belgidan iborat bulishi kerak" }).optional(),
+  name: z.string().min(1, { message: "name bo'sh bulishi mumkin emas" }).optional(),
+  address: z.string().min(1, { message: "address bo'sh bulishi mumkin emas" }).optional(),
+  location: z.string().min(1, { message: "location bo'sh bulishi mumkin emas" }).optional(),
+  district_id: z.string().length(24, { message: "district_id 24 ta bulishi kerak" }).optional()
+})
