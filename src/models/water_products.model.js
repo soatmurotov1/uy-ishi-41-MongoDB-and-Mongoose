@@ -1,14 +1,14 @@
-import mongoose, { model, Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 
-const productsSchema = new mongoose.Schema(
+const waterProductSchema = new Schema(
   {
     name: { type: String, required: true },
     volume_liters: { type: Number, required: true },
     price: { type: Number, required: true },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
-const productsModel = model("products", productsSchema);
+const waterProductModel = model("products", waterProductSchema);
 
-export default productsModel
+export default waterProductModel;

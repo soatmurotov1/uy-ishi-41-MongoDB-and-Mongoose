@@ -1,27 +1,29 @@
-import { config } from "../config/index.js";
 import { verifyToken } from "../helper/jwt.js";
+import { config } from "../config/index.js";
+import customersModel from "../models/customers.model.js";
 
-export const authGuard = (req, res, next) => {
+export const authGuard = async (req, res, next) => {
   try {
-    const authHeader = req.headers["authorization"]
+    const authHeader = req.headers["authorization"] || req.headers["authheader"];
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Token mavjud emas yoki xato format" });
+      return res.status(401).json({ message: "Token topilmadi" });
     }
 
     const token = authHeader.split(" ")[1];
-    const validToken = verifyToken(token, config.jwt.accessSecret);
+    const verified = verifyToken(token, config.jwt.accessSecret);
+    if (!verified) return res.status(403).json({ message: "Token yaroqsiz" });
 
-    if (!validToken) {
-      return res.status(401).json({ message: "Token yaroqsiz yoki muddati tugagan" });
-    }
+    const user = await customersModel.findById(verified.id);
+    if (!user) return res.status(404).json({ message: "Foydalanuvchi topilmadi" });
 
-    req.user = validToken
+    req.user = user;
     next();
   } catch (error) {
-    console.error("AuthGuard error:", error);
-    return res.status(500).json({ message: "Server xatosi auth tekshiruvda" });
+    console.error("authGuard xato:", error.message);
+    return res.status(403).json({ message: "Token noto‘g‘ri yoki foydalanuvchi topilmadi" });
   }
 };
+
 
 export const roleGuard = (...allowedRoles) => {
   return (req, res, next) => {
@@ -35,4 +37,4 @@ export const roleGuard = (...allowedRoles) => {
     }
     next()
   };
-};
+}

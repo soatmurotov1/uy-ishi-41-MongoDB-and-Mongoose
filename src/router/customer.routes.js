@@ -1,19 +1,19 @@
-import { Router } from "express";
-import { validation } from "../middleware/validation.js";
-import { authGuard, roleGuard } from "../middleware/guard.middleware.js";
-import { customerValidation, customerUpdValidation } from "../validation/customer.validation.js";
-import { registerUser, profileUser, getAllUsers, updateUser, deleteUser, loginUser, refreshAccessToken } from "../controller/auth.controller.js";
+import { Router } from "express"
+import { validation } from "../middleware/validation.js"
+import { authGuard, roleGuard } from "../middleware/guard.middleware.js"
+import { register, login, refreshAccessToken, profile, getAll, verifyOtp, deleted } from "../controller/customers.controller.js"
+import {customerValidation } from "../validation/customer.validation.js";
 
-const router = Router();
-
-
-router.post("/", validation(customerValidation), registerUser);
-router.get("/profile", authGuard, roleGuard("customer","admin","manager"), profileUser);
-router.get("/", authGuard, roleGuard("admin","manager"), getAllUsers)
-router.put("/:id", authGuard, roleGuard("admin"), validation(customerUpdValidation), updateUser);
-router.delete("/:id", authGuard, roleGuard("admin"), deleteUser);
-router.post("/login", loginUser)
-router.post("/refresh", refreshAccessToken);
+const customerRouter = Router();
 
 
-export default router;
+customerRouter.post("/register", validation(customerValidation), register)
+customerRouter.post("/verify", verifyOtp)
+customerRouter.post("/login", login)
+customerRouter.post("/refresh", refreshAccessToken)
+customerRouter.get("/profile",authGuard, roleGuard("customer", "manager", "admin"), profile)
+customerRouter.get("/", authGuard, roleGuard("admin", "manager"), getAll)
+customerRouter.delete("/:id", authGuard, roleGuard("admin", "manager"), deleted)
+
+export default customerRouter 
+

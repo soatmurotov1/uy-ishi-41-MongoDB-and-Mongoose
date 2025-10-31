@@ -1,77 +1,85 @@
-import productsModel from "../models/water_products.model.js";
+import waterProductModel from "../models/water_products.model.js";
 
 export const create = async (req, res, next) => {
   try {
-    const createwater = await water_productsModel.create(req.validatedData);
-    
-    res.status(201).json({ message: `Created water_product`, data: createwater });
+    const createdProduct = await waterProductModel.create(req.validatedData);
+    res.status(201).json({
+      success: true,
+      message: "Suv mahsuloti yaratildi",
+      data: createdProduct,
+    });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
 
 export const getAll = async (req, res, next) => {
   try {
-    const getAllwater = await productsModel.find();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const products = await waterProductModel.find().skip(skip).limit(limit);
+    const total = await waterProductModel.countDocuments();
+
     res.status(200).json({
-      message: `found all water`,
-      count: getAllwater.length,
-      data: getAllwater,
+      success: true,
+      message: "Barcha suv mahsulotlari topildi",
+      page,
+      total,
+      data: products,
     });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
 
 export const getOne = async (req, res, next) => {
   try {
-    const getOnewater = await productsModel.findById(req.params.id);
-    if (!getOnewater) {
-      return res.status(404).json({ message: `not found ID ${req.params.id} from water`});
+    const product = await waterProductModel.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({
+        message: `ID ${req.params.id} bo'yicha mahsulot topilmadi`,
+      });
     }
-    res.status(200).json({
-      message: `found ID ${req.params.id} from water`, data: getOnewater,
-    });
+    res.status(200).json({ success: true, data: product });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
 
 export const update = async (req, res, next) => {
   try {
-    const updatewater = await productsModel.findByIdAndUpdate(
+    const updatedProduct = await waterProductModel.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true },
+      { new: true, runValidators: true }
     );
-    if (!updatewater) {
-      return res
-        .status(404)
-        .json({ message: `not found ID ${req.params.id} from water` });
+    if (!updatedProduct) {
+      return res.status(404).json({
+        message: `ID ${req.params.id} bo'yicha mahsulot topilmadi`,
+      });
     }
-    res.status(200).json({ message: `Updated water`, data: updatewater });
+    res.status(200).json({
+      success: true,
+      message: "Mahsulot yangilandi",
+      data: updatedProduct,
+    });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
 
 export const deleted = async (req, res, next) => {
   try {
-    const deletewater = await productsModel.findByIdAndDelete(
-      req.params.id,
-    );
-    if (!deletewater) {
-      return res
-        .status(404)
-        .json({ message: `not found ID ${req.params.id} from water` });
+    const deletedProduct = await waterProductModel.findByIdAndDelete(req.params.id);
+    if (!deletedProduct) {
+      return res.status(404).json({
+        message: `ID ${req.params.id} bo'yicha mahsulot topilmadi`,
+      });
     }
-    res.status(200).json({ message: `deleted water ` });
+    res.status(200).json({ success: true, message: "Mahsulot o'chirildi" });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };

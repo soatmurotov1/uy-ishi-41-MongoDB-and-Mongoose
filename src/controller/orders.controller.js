@@ -2,13 +2,13 @@ import orderModel from "../models/orders.model.js";
 
 export const create = async (req, res, next) => {
   try {
-    const create = await orderModel.create(req.validatedData);
-    res.status(201).send({ message: `Created order`, data: createOrder });
+    const created = await Order.create(payload);
+    res.status(201).json({ success: true, data: created });
   } catch (error) {
     console.log(error);
     next(error);
   }
-};
+}
 
 export const getAll = async (req, res, next) => {
   try {

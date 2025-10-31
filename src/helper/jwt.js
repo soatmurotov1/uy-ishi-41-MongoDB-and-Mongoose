@@ -1,13 +1,14 @@
 import jwt from "jsonwebtoken";
+import { config } from "../config/index.js";
 
-export const generateToken = (payload, secret, expiresIn) => {
-  return jwt.sign(payload, secret, { expiresIn });
+export const generateAccessToken = (payload) => {
+  return jwt.sign(payload, config.jwt.accessSecret, { expiresIn: "15m" });
+};
+
+export const generateRefreshToken = (payload) => {
+  return jwt.sign(payload, config.jwt.refreshSecret, { expiresIn: "5m" });
 };
 
 export const verifyToken = (token, secret) => {
-  try {
-    return jwt.verify(token, secret);
-  } catch (error) {
-    return null;
-  }
+  return jwt.verify(token, secret);
 };

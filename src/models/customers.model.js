@@ -1,34 +1,26 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
 
-const customerSchema = new mongoose.Schema(
+const customerSchema = new Schema(
   {
     name: { type: String, required: true },
-    phone: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
+    phone: String,
+    email: { type: String, unique: true, required: true },
     password: { type: String, required: true },
-    role: {
-      type: String,
-      enum: ["admin", "manager", "staff", "customer", "user"],
-      default: "user",
-    },
+    role: { type: String, enum: ["user", "admin", "customer", "manager"], default: "customer"},
+    accessToken: String,
+    refreshToken: String,
+    otp: String,
+    otpExpiresAt: Date,
+    isVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
-);
+)
 
 customerSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-  this.password = await bcrypt.hash(this.password, 10);
-  next();
-});
+  if (!this.isModified("password")) return next()
+  this.password = await bcrypt.hash(this.password, 10)
+  next()
+})
 
-customerSchema.pre("findOneAndUpdate", async function (next) {
-  const update = this.getUpdate();
-  if (update?.password) {
-    update.password = await bcrypt.hash(update.password, 10);
-  }
-  next();
-});
-
-const customerModel = mongoose.model("customers", customerSchema);
-export default customerModel;
+export default mongoose.model("customers", customerSchema)

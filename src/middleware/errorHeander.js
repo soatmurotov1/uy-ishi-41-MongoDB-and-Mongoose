@@ -1,4 +1,9 @@
-export const errorHandler = (req, res, error) => {
-  console.error(error.stack)
-  return res.status(error.status || 500).json({ message: error.message || `error in the server` })
-}
+export const errorHandler = (err, req, res, next) => {
+  console.error("Server Error:");
+  console.error(err.stack);
+
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "error in the server",
+  });
+};
