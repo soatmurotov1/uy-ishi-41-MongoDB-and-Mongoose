@@ -1,4 +1,4 @@
-import { z, ZodBase64 } from "zod";
+import { z } from "zod";
 
 export const customerValidation = z.object({
   name: z.string()

@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 import { hashPasswordBeforeSave, hashPasswordBeforeUpdate, comparePasswords } from "../middleware/password.middleware.js";
 
 const deliveryStaffSchema = new mongoose.Schema(
@@ -7,20 +6,40 @@ const deliveryStaffSchema = new mongoose.Schema(
     name: { type: String, required: true },
     phone: { type: String, required: true },
     vehicle_number: { type: String, required: true },
-    district_id: { type: Schema.Types.ObjectId, ref: "district", required: true },
-    email: { type: String, required: true },
+    district_id: {
+      type: Schema.Types.ObjectId,
+      ref: "districts",
+      required: true,
+    },
+    email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ["staff", "manager", "admin", "user", "customer"], default: "user" },
+
+    role: {
+      type: String,
+      enum: ["staff", "manager", "admin", "user", "customer"],
+      default: "staff",
+    },
+
+    otp: { type: String, default: null },
+    otpExpiresAt: { type: Date, default: null },
+    isVerified: { type: Boolean, default: false },
+
+    accessToken: { type: String, default: null },
+    refreshToken: { type: String, default: null },
   },
   { timestamps: true }
-);
+)
 
 deliveryStaffSchema.pre("save", hashPasswordBeforeSave);
-deliveryStaffSchema.pre("findByIdAndUpdate", hashPasswordBeforeUpdate);
+deliveryStaffSchema.pre("findOneAndUpdate", hashPasswordBeforeUpdate);
 
 deliveryStaffSchema.methods.comparePassword = async function (enteredPassword) {
   return comparePasswords(enteredPassword, this.password);
-};
+}
 
-const DeliveryStaffModel = model("delivery_staff", deliveryStaffSchema);
-export default DeliveryStaffModel;
+const DeliveryStaffModel = model("delivery_staff", deliveryStaffSchema)
+
+export default DeliveryStaffModel
+
+
+

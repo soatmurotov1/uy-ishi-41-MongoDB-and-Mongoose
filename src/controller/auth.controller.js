@@ -1,155 +1,103 @@
-import customersModel from "../models/customers.model.js";
-import bcrypt from "bcrypt";
-import { sendEmail } from "../helper/email.js";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-  verifyToken,
-} from "../helper/jwt.js";
-import crypto from "crypto";
 import { config } from "../config/index.js";
+import jwt from "jsonwebtoken";
+import delivery_staffModel from "../models/delivery_staff.model.js"
 
-export const registerUser = async (req, res, next) => {
+
+const generateTokens = (user) => {
+  const accessToken = jwt.sign(
+    { id: user._id, role: user.role },
+    config.jwt.accessSecret,
+    { expiresIn: "15m" } 
+  )
+
+  const refreshToken = jwt.sign(
+    { id: user._id },
+    config.jwt.refreshSecret,
+    { expiresIn: "5m" } 
+  );
+
+  return { accessToken, refreshToken }
+}
+
+export const registerDeliveryStaff = async (req, res, next) => {
   try {
-    const { name, email, password, phone } = req.validatedData;
-
-    const existing = await customersModel.findOne({ email });
-    if (existing)
-      return res
-        .status(400)
-        .json({ message: "Bu email avval ro'yxatdan o'tgan" });
-
-    const otp = crypto.randomInt(100000, 999999).toString();
-    const otpExpiresAt = Date.now() + 5 * 60 * 1000; 
-
-    const user = await customersModel.create({
+    const { name, phone, vehicle_number, district_id, email, password, role } = req.body
+    const existingUser = await delivery_staffModel.findOne({ email })
+    if (existingUser) {
+      return res.status(400).json({ message: "Bunday email avval ro'yxatdan o'tgan" })
+    }
+    const user = await delivery_staffModel.create({
       name,
+      phone,
+      vehicle_number,
+      district_id,
       email,
       password,
-      phone,
-      otp,
-      otpExpiresAt,
-    });
+      role: role || "staff",
+    })
 
-    await sendEmail(
-      email,
-      "Email tasdiqlash kodi",
-      `Sizning tasdiqlash kodingiz: ${otp} (5 daqiqa amal qiladi)`
-    );
+    const tokens = generateTokens(user)
 
     res.status(201).json({
-      message: "Foydalanuvchi yaratildi. Tasdiqlash kodi emailingizga yuborildi.",
-    });
+      message: "Xodim muvaffaqiyatli ro'yxatdan o'tdi",
+      data: user,
+      ...tokens,
+    })
   } catch (error) {
-    next(error);
-  }
-};
-
-export const verifyOtp = async (req, res, next) => {
-  try {
-    const { email, code } = req.body;
-
-    const user = await customersModel.findOne({ email });
-    if (!user)
-      return res.status(404).json({ message: "Foydalanuvchi topilmadi" });
-
-    if (user.isVerified)
-      return res.status(400).json({ message: "Hisob allaqachon tasdiqlangan" });
-
-    if (String(user.otp) !== String(code))
-      return res.status(400).json({ message: "Kod noto'g'ri" });
-
-    if (user.otpExpiresAt < Date.now())
-      return res.status(400).json({ message: "Kod muddati tugagan" });
-
-    user.isVerified = true;
-    user.otp = null;         
-    user.otpExpiresAt = null;
-    await user.save();
-
-    res.status(200).json({ message: "Email muvaffaqiyatli tasdiqlandi" });
-  } catch (error) {
+    console.log(error)
     next(error)
   }
-};
+}
 
-
-
-export const loginUser = async (req, res, next) => {
+export const loginDeliveryStaff = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body
+    const user = await delivery_staffModel.findOne({ email }).select("password role name email")
+    console.log("👉 enteredPassword:", password)
+    console.log("👉 user password from DB:", user?.password);
 
-    const user = await customersModel.findOne({ email });
-    if (!user)
-      return res.status(404).json({ message: "Foydalanuvchi topilmadi" });
-
-    if (!user.isVerified)
-      return res
-        .status(403)
-        .json({ message: "Hisob tasdiqlanmagan. Avval emailni tasdiqlang." });
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res.status(400).json({ message: "Email yoki parol xato" });
-
-    const accessToken = generateAccessToken({ id: user._id, role: user.role });
-    const refreshToken = generateRefreshToken({ id: user._id });
-
-    user.accessToken = accessToken;
-    user.refreshToken = refreshToken;
-    await user.save();
-
+    if (!user) {
+      return res.status(404).json({ message: "Bunday foydalanuvchi topilmadi" })
+    }
+    const isMatch = await user.comparePassword(password)
+    if (!isMatch) {
+      return res.status(401).json({ message: "Parol noto'g'ri" });
+    }
+    const tokens = generateTokens(user)
     res.status(200).json({
-      message: "Kirish muvaffaqiyatli",
-      accessToken,
-      refreshToken,
+      message: "Tizimga kirish muvaffaqiyatli",
+      data: user,
+      ...tokens,
     });
   } catch (error) {
-    next(error);
+    console.log(error)
+    next(error)
   }
-};
+}
 
-export const refreshAccessToken = async (req, res, next) => {
+export const refreshAccessTokenDeli = async (req, res, next) => {
   try {
-    const { refreshToken } = req.body;
-    if (!refreshToken)
-      return res.status(400).json({ message: "Refresh token kerak" });
+    const { refreshToken } = req.body
+    if (!refreshToken) {
+      return res.status(401).json({ message: "refreshToken talab qilinadi" })
+    }
 
-    const decoded = verifyToken(refreshToken, config.jwt.refreshSecret);
-    const user = await customersModel.findById(decoded.id);
-    if (!user || user.refreshToken !== refreshToken)
-      return res.status(403).json({ message: "Noto‘g‘ri token" });
+    const decoded = jwt.verify(refreshToken, config.jwt.refreshSecret)
 
-    const newAccess = generateAccessToken({ id: user._id, role: user.role });
-    user.accessToken = newAccess;
-    await user.save();
+    const user = await delivery_staffModel.findById(decoded.id)
+    if (!user) {
+      return res.status(404).json({ message: "Foydalanuvchi topilmadi" })
+    }
 
-    res
-      .status(200)
-      .json({ message: "Access token yangilandi", accessToken: newAccess });
-  } catch (error) {
-    next(error);
-  }
-};
+    const tokens = generateTokens(user)
 
-export const profileUser = async (req, res, next) => {
-  try {
-    const user = await customersModel.findById(req.user.id).select("-password");
-    res.status(200).json({ message: "Profil ma'lumotlari", data: user });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getAllUsers = async (req, res, next) => {
-  try {
-    const users = await customersModel.find();
     res.status(200).json({
-      message: "Barcha foydalanuvchilar",
-      count: users.length,
-      data: users,
-    });
+      message: "Access token yangilandi",
+      ...tokens,
+    })
   } catch (error) {
-    next(error);
+    console.log(error);
+    return res.status(403).json({ message: "refreshToken yaroqsiz yoki muddati tugagan" })
   }
-};
+}
+
