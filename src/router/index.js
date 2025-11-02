@@ -9,14 +9,16 @@ import waterRouter from "./water_products.routes.js";
 import customerRouter from "./customer.routes.js";
 
 const router =Router()
-router.use("/customers", customerRouter);
-router.use("/districts", districtsRouter);
-router.use("/delivery_staff", deliRouter);
-router.use("/address", addressRouter);
-router.use("/orders", orderRouter);
-router.use("/products", waterRouter);
-router.use("/order_items", orderItemRouter);
-router.use("/payments", paymentsRouter);
 
 
-export default router;
+router.use("/customers", customerRouter)
+router.use("/districts", districtsRouter)
+router.use("/delivery_staff", deliRouter)
+router.use("/address", addressRouter)
+router.use("/orders", orderRouter)
+router.use("/products", waterRouter)
+router.use("/order_items", orderItemRouter)
+router.use("/payments", paymentsRouter)
+
+
+export default router

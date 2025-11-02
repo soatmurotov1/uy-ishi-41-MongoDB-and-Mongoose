@@ -2,7 +2,7 @@ import customersModel from "../models/customers.model.js";
 import bcrypt from "bcrypt";
 import { sendEmail } from "../helper/email.js";
 import { generateAccessToken, generateRefreshToken, verifyToken } from "../helper/jwt.js";
-import crypto from "crypto"
+import crypto from "crypto";
 import { config } from "../config/index.js";
 
 
@@ -11,9 +11,32 @@ export const register = async (req, res, next) => {
     const { name, email, password, phone, role } = req.validatedData
 
     const existing = await customersModel.findOne({ email })
+
     if (existing) {
-      return res.status(400).json({ message: "Bu email avval ro'yxatdan o'tgan" })
+      if (existing.isVerified) {
+        return res.status(400).json({
+          message: "Bu email allaqachon ro'yxatdan o'tgan va tasdiqlangan.",
+        });
+      } else {
+        const newOtp = crypto.randomInt(100000, 999999).toString()
+        const otpExpiresAt = Date.now() + 5 * 60 * 1000
+
+        existing.otp = newOtp
+        existing.otpExpiresAt = otpExpiresAt
+        await existing.save()
+
+        await sendEmail(
+          email,
+          "Yangi tasdiqlash kodi",
+          `Sizning yangi tasdiqlash kodingiz: ${newOtp} (5 daqiqa amal qiladi)`
+        )
+
+        return res.status(200).json({
+          message: "Siz avval ro'yxatdan o'tgansiz, lekin email tasdiqlanmagan. Yangi tasdiqlash kodi emailingizga yuborildi.",
+        });
+      }
     }
+
     const otp = crypto.randomInt(100000, 999999).toString()
     const otpExpiresAt = Date.now() + 5 * 60 * 1000
 
@@ -22,10 +45,10 @@ export const register = async (req, res, next) => {
       email,
       password,
       phone,
-      otp,
       role,
+      otp,
       otpExpiresAt,
-    })
+    });
 
     await sendEmail(
       email,
@@ -35,55 +58,53 @@ export const register = async (req, res, next) => {
 
     res.status(201).json({
       message: "Foydalanuvchi yaratildi. Tasdiqlash kodi emailingizga yuborildi.",
-    })
+    });
   } catch (error) {
-    next(error)
+    next(error);
   }
 }
 
 export const verifyOtp = async (req, res, next) => {
   try {
     const { email, code } = req.body
+
     const user = await customersModel.findOne({ email })
-    if (!user){
+    if (!user)
       return res.status(404).json({ message: "Foydalanuvchi topilmadi" })
-    }
 
-    if (user.isVerified){
+    if (user.isVerified)
       return res.status(400).json({ message: "Hisob allaqachon tasdiqlangan" })
-    }
 
-    if (String(user.otp) !== String(code)) {
+    if (String(user.otp) !== String(code))
       return res.status(400).json({ message: "Kod noto'g'ri" })
-    }
 
-    if (user.otpExpiresAt < Date.now()) {
+    if (user.otpExpiresAt < Date.now())
       return res.status(400).json({ message: "Kod muddati tugagan" })
-    }
 
     user.isVerified = true
-    user.otp = null   
+    user.otp = null     
     user.otpExpiresAt = null
     await user.save()
+
     res.status(200).json({ message: "Email muvaffaqiyatli tasdiqlandi" })
   } catch (error) {
     next(error)
   }
 }
 
+
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body
+
     const user = await customersModel.findOne({ email })
-    if (!user) {
+    if (!user)
       return res.status(404).json({ message: "Foydalanuvchi topilmadi" })
-    }
 
-    if (!user.isVerified){
+    if (!user.isVerified)
       return res.status(403).json({ message: "Hisob tasdiqlanmagan. Avval emailni tasdiqlang." })
-    }
 
-    const isMatch = await bcrypt.compare(password, user.password)
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return res.status(400).json({ message: "Email yoki parol xato" })
 
@@ -94,24 +115,26 @@ export const login = async (req, res, next) => {
     user.refreshToken = refreshToken
     await user.save()
 
-    res.status(200).json({ message: "Kirish muvaffaqiyatli", accessToken, refreshToken })
+    res.status(200).json({
+      message: "Kirish muvaffaqiyatli",
+      accessToken,
+      refreshToken,
+    });
   } catch (error) {
     next(error)
   }
-}
+};
 
 export const refreshAccessToken = async (req, res, next) => {
   try {
     const { refreshToken } = req.body
-    if (!refreshToken){
+    if (!refreshToken)
       return res.status(400).json({ message: "Refresh token kerak" })
-    }
 
     const decoded = verifyToken(refreshToken, config.jwt.refreshSecret)
     const user = await customersModel.findById(decoded.id)
-    if (!user || user.refreshToken !== refreshToken) {
-      return res.status(403).json({ message: "Noto'g'ri token" });
-    }
+    if (!user || user.refreshToken !== refreshToken)
+      return res.status(403).json({ message: "Noto'g'ri token" })
 
     const newAccess = generateAccessToken({ id: user._id, role: user.role })
     user.accessToken = newAccess
@@ -121,7 +144,7 @@ export const refreshAccessToken = async (req, res, next) => {
   } catch (error) {
     next(error)
   }
-}
+};
 
 export const profile = async (req, res, next) => {
   try {
@@ -139,73 +162,78 @@ export const getAll = async (req, res, next) => {
       message: "Barcha foydalanuvchilar",
       count: users.length,
       data: users,
-    });
+    })
   } catch (error) {
     next(error)
   }
 }
-
-
 
 export const deleted = async (req, res, next) => {
   try {
-    const { id } = req.params
-    const user = req.user
-
-    if (!user || !user._id) {
-      return res.status(401).json({
-        success: false,
-        message: "Token xato yoki foydalanuvchi topilmadi",
-      })
+    const deleteCustomer = await customersModel.findByIdAndDelete(req.params.id)
+    if (!deleteCustomer) {
+      return res.status(404).json({ message: `not found ID ${req.params.id} from customer` })
     }
-
-    const targetUser = await customersModel.findById(id)
-    if (!targetUser) {
-      return res.status(404).json({
-        success: false,
-        message: "Foydalanuvchi topilmadi",
-      });
-    }
-
-    if (user.role === "customer") {
-      return res.status(403).json({
-        success: false,
-        message: "Sizda bu amalni bajarish huquqi yo'q",
-      });
-    }
-
-    const isSameUser = targetUser._id.toString() === user._id.toString()
-
-    if (user.role === "manager") {
-      if (isSameUser || targetUser.role === "customer") {
-        await customersModel.findByIdAndDelete(id)
-        return res.status(200).json({
-          success: true,
-          message: "Foydalanuvchi o'chirildi",
-        });
-      }
-      return res.status(403).json({
-        success: false,
-        message: "Siz bu foydalanuvchini o'chira olmaysiz",
-      });
-    }
-
-    if (user.role === "admin") {
-      await customersModel.findByIdAndDelete(id)
-      return res.status(200).json({
-        success: true,
-        message: "Foydalanuvchi o'chirildi",
-      });
-    }
-
-    return res.status(403).json({
-      success: false,
-      message: "Ruxsat yo'q",
-    });
+    res.status(200).json({ message: `deleted customer` })
   } catch (error) {
-    console.error("Delete error:", error)
+    console.log(error)
+    next(error)
+  }
+}
+
+export const update = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const { name, email, phone, password, role } = req.body
+
+    const user = await customersModel.findById(id)
+    if (!user)
+      return res.status(404).json({ message: "Foydalanuvchi topilmadi" })
+
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10)
+      user.password = hashedPassword
+    }
+
+    if (name) user.name = name
+    if (email) user.email = email
+    if (phone) user.phone = phone
+    if (role) user.role = role
+
+    await user.save()
+
+    res.status(200).json({ message: "Foydalanuvchi ma'lumotlari yangilandi" })
+  } catch (error) {
     next(error)
   }
 }
 
 
+
+export const create = async (req, res, next) => {
+  try {
+    const createpayment = await customersModel.create(req.validatedData)
+    res.status(201).send({ message: `Created customer`, data: createpayment })
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+}
+
+
+
+export const getOne = async (req, res, next) => {
+  try {
+    const getOneCustomer = await customersModel.findById(req.params.id)
+    if (!getOneCustomer) {
+      return res.status(404).json({ message: `not found ID ${req.params.id} from customer` })
+    }
+    res.status(200).json({
+      message: `found ID ${req.params.id} from customer`,
+      data: getOneCustomer,
+    })
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+}

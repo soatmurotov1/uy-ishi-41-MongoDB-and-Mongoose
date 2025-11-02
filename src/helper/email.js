@@ -8,7 +8,7 @@ export const sendEmail = async (to, subject, text) => {
       user: config.email.user,
       pass: config.email.pass,
     },
-  });
+  })
 
   const mailOptions = {
     from: config.email.user,
@@ -17,5 +17,5 @@ export const sendEmail = async (to, subject, text) => {
     text,
   };
 
-  await transporter.sendMail(mailOptions);
-};
+  await transporter.sendMail(mailOptions)
+}

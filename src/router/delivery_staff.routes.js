@@ -1,24 +1,26 @@
 import { Router } from "express";
 import { validation } from "../middleware/validation.js";
 import { authGuard, roleGuard } from "../middleware/guard.middleware.js";
-import { delivery_straffValidation, delivery_staffUpdValidation } from "../validation/delivery_staff.validation.js";
 import { create, getAll, getOne, update, deleted } from "../controller/delivery_straff.controller.js";
-import { getAllUsers, profileUser, registerUser } from "../controller/auth.controller.js";
-import { loginUser } from "../controller/auth.controller.js";
-import { refreshAccessToken } from "../controller/auth.controller.js";
-
+import { register, login, refreshAccessToken } from "../controller/delivery_straff.controller.js";
+import { delivery_straffValidation, delivery_staffUpdValidation,  } from "../validation/delivery_staff.validation.js";
+import { verifyOtp, profile } from "../controller/delivery_straff.controller.js";
 
 const deliRouter = Router()
 
 
-deliRouter.post("/", roleGuard("admin", "manager"), validation(delivery_straffValidation), create)
-deliRouter.get("/profile", authGuard, roleGuard("customer","admin","manager"), getAll);
-deliRouter.get("/", authGuard, roleGuard("admin", "manager", "staff"), getAll)
-deliRouter.put("/:id", authGuard, roleGuard("admin", "manager"), validation(delivery_staffUpdValidation), update)
-deliRouter.delete("/:id", authGuard, roleGuard("admin"), deleted)
-deliRouter.post("/login", loginUser) 
+deliRouter.post("/register",validation(delivery_straffValidation), register)
+deliRouter.post("/verify", verifyOtp)
+deliRouter.post("/login", login)
+deliRouter.get("/profile",authGuard, roleGuard("admin", "manager", "staff", "customer"), profile)
 deliRouter.post("/refresh", refreshAccessToken)
 
+
+deliRouter.post("/", authGuard, roleGuard("admin", "manager"), validation(delivery_straffValidation), create)
+deliRouter.get("/", authGuard, roleGuard("admin", "manager", "staff"), getAll)
+deliRouter.get("/:id", authGuard, roleGuard("admin", "manager", "staff"), getOne)
+deliRouter.put("/:id", authGuard, roleGuard("admin", "manager"), validation(delivery_staffUpdValidation), update)
+deliRouter.delete("/:id", authGuard, roleGuard("admin", "manager"), deleted)
 
 
 export default deliRouter
