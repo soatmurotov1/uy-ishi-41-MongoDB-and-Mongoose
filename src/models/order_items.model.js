@@ -12,8 +12,8 @@ const order_itemSchema = new mongoose.Schema(
     total_price: { type: Number, required: true },
   },
   { timestamps: true },
-);
+)
 
-const order_itemModel = model("order_items", order_itemSchema);
+const order_itemModel = model("order_items", order_itemSchema)
 
-export default order_itemModel;
+export default order_itemModel

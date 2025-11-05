@@ -16,7 +16,7 @@ const deliveryStaffSchema = new mongoose.Schema(
 
     role: {
       type: String,
-      enum: ["staff", "manager", "admin", "user", "customer"],
+      enum: ["admin", "manager", "staff", "customer"],
       default: "staff",
     },
 

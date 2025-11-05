@@ -136,7 +136,7 @@ export const refreshAccessToken = async (req, res, next) => {
     if (!user || user.refreshToken !== refreshToken)
       return res.status(403).json({ message: "Noto'g'ri token" })
 
-    const newAccess = generateAccessToken({ id: user._id, role: user.role })
+    const newAccess = generateAccessToken({ id: user._id, role: user.role,  })
     user.accessToken = newAccess
     await user.save()
 

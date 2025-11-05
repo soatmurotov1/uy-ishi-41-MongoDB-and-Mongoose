@@ -7,7 +7,7 @@ const customerSchema = new Schema(
     phone: String,
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ["user", "admin", "customer", "manager", "teacher"], default: "customer"},
+    role: { type: String, enum: ["admin", "manager", "customer", "staff"], default: "customer"},
     otp: String,
     otpExpiresAt: Date,
     isVerified: { type: Boolean, default: false },
