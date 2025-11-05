@@ -33,7 +33,7 @@ export const register = async (req, res, next) => {
 
         return res.status(200).json({
           message: "Siz avval ro'yxatdan o'tgansiz, lekin email tasdiqlanmagan. Yangi tasdiqlash kodi emailingizga yuborildi.",
-        });
+        })
       }
     }
 
@@ -48,7 +48,7 @@ export const register = async (req, res, next) => {
       role,
       otp,
       otpExpiresAt,
-    });
+    })
 
     await sendEmail(
       email,
@@ -60,7 +60,7 @@ export const register = async (req, res, next) => {
       message: "Foydalanuvchi yaratildi. Tasdiqlash kodi emailingizga yuborildi.",
     });
   } catch (error) {
-    next(error);
+    next(error)
   }
 }
 
@@ -123,28 +123,32 @@ export const login = async (req, res, next) => {
   } catch (error) {
     next(error)
   }
-};
+}
 
 export const refreshAccessToken = async (req, res, next) => {
   try {
     const { refreshToken } = req.body
-    if (!refreshToken)
+    if (!refreshToken) {
       return res.status(400).json({ message: "Refresh token kerak" })
-
-    const decoded = verifyToken(refreshToken, config.jwt.refreshSecret)
+    }
+    const decoded = verifyToken(refreshToken, "refresh")
     const user = await customersModel.findById(decoded.id)
     if (!user || user.refreshToken !== refreshToken)
-      return res.status(403).json({ message: "Noto'g'ri token" })
+      return res.status(403).json({ message: "Token noto'g'ri yoki token eskirgan" })
+    const newRefresh = generateRefreshToken({ id: user._id })
 
-    const newAccess = generateAccessToken({ id: user._id, role: user.role,  })
-    user.accessToken = newAccess
+    user.refreshToken = newRefresh
     await user.save()
 
-    res.status(200).json({ message: "Access token yangilandi", accessToken: newAccess })
+    res.status(200).json({
+      message: "Tokenlar yangilandi",
+      refreshToken: newRefresh
+    })
   } catch (error) {
     next(error)
   }
-};
+}
+
 
 export const profile = async (req, res, next) => {
   try {
@@ -157,7 +161,7 @@ export const profile = async (req, res, next) => {
 
 export const getAll = async (req, res, next) => {
   try {
-    const users = await customersModel.find()
+    const users = await customersModel.find().select("-password")
     res.status(200).json({
       message: "Barcha foydalanuvchilar",
       count: users.length,
@@ -186,7 +190,7 @@ export const update = async (req, res, next) => {
     const { id } = req.params
     const { name, email, phone, password, role } = req.body
 
-    const user = await customersModel.findById(id)
+    const user = await customersModel.findById(id).select("-password")
     if (!user)
       return res.status(404).json({ message: "Foydalanuvchi topilmadi" })
 
@@ -212,8 +216,9 @@ export const update = async (req, res, next) => {
 
 export const create = async (req, res, next) => {
   try {
-    const createpayment = await customersModel.create(req.validatedData)
-    res.status(201).send({ message: `Created customer`, data: createpayment })
+    const createcustomer = await customersModel.create(req.validatedData)
+    const { password, ...rest} = createcustomer.toObject()
+    res.status(201).send({ message: `Created customer`, data: rest })
   } catch (error) {
     console.log(error)
     next(error)
@@ -224,7 +229,7 @@ export const create = async (req, res, next) => {
 
 export const getOne = async (req, res, next) => {
   try {
-    const getOneCustomer = await customersModel.findById(req.params.id)
+    const getOneCustomer = await customersModel.findById(req.params.id).select("-password")
     if (!getOneCustomer) {
       return res.status(404).json({ message: `not found ID ${req.params.id} from customer` })
     }

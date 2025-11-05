@@ -46,24 +46,24 @@ export const update = async (req, res, next) => {
     );
 
     if (!address) {
-      return res.status(404).send({ message: `not found address` });
+      return res.status(404).send({ message: `not found address` })
     }
-    res.status(200).send({ message: `address updated`, data: address });
+    res.status(200).send({ message: `address updated`, data: address })
   } catch (error) {
-    console.log(error);
-    next(error);
+    console.log(error)
+    next(error)
   }
-};
+}
 
 export const deleted = async (req, res, next) => {
   try {
-    const address = await addressModel.findByIdAndDelete(req.params.id);
+    const address = await addressModel.findByIdAndDelete(req.params.id)
     if (!address) {
-      return res.status(404).send({ message: `not found address` });
+      return res.status(404).send({ message: `not found address` })
     }
-    res.status(204).send({ message: `Address deleted` });
+    res.status(200).send({ message: `Address deleted` })
   } catch (error) {
-    console.log(error);
-    next(error);
+    console.log(error)
+    next(error)
   }
-};
+}

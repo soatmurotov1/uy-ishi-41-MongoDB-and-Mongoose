@@ -8,9 +8,9 @@ import { create, getAll, getOne, update, deleted } from "../controller/water_pro
 const waterRouter = Router();
 
 
-waterRouter.post("/", roleGuard("admin", "manager"), validation(productValidation), create)
-waterRouter.get("/", authGuard, roleGuard("admin", "manager", "user", "customer", "staff"), getAll)
-waterRouter.get("/:id", authGuard, roleGuard("admin", "manager", "user", "customer", "staff"), getOne)
+waterRouter.post("/", authGuard, roleGuard("admin", "manager"), validation(productValidation), create)
+waterRouter.get("/", authGuard, roleGuard("admin", "manager", "staff", "customer"), getAll)
+waterRouter.get("/:id", authGuard, roleGuard("admin", "manager", "staff", "customer"), getOne)
 waterRouter.put("/:id", authGuard, roleGuard("admin", "manager"), validation(productUpdValidation), update)
 waterRouter.delete("/:id", authGuard, roleGuard("admin", "manager"), deleted)
 

@@ -7,8 +7,8 @@ const waterProductSchema = new Schema(
     price: { type: Number, required: true },
   },
   { timestamps: true }
-);
+)
 
-const waterProductModel = model("products", waterProductSchema);
+const waterProductModel = model("products", waterProductSchema)
 
-export default waterProductModel;
+export default waterProductModel
