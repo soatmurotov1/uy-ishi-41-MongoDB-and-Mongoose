@@ -49,7 +49,7 @@ export const register = async (req, res, next) => {
       vehicle_number,
       otp,
       otpExpiresAt,
-    });
+    })
 
     await sendEmail(
       email,
@@ -125,7 +125,7 @@ export const login = async (req, res, next) => {
   } catch (error) {
     next(error)
   }
-};
+}
 
 export const refreshAccessToken = async (req, res, next) => {
   try {
@@ -146,7 +146,7 @@ export const refreshAccessToken = async (req, res, next) => {
   } catch (error) {
     next(error)
   }
-};
+}
 
 export const profile = async (req, res, next) => {
   try {
@@ -159,14 +159,14 @@ export const profile = async (req, res, next) => {
 
 export const getAll = async (req, res, next) => {
   try {
-    const users = await DeliveryStaffModel.find()
+    const users = await DeliveryStaffModel.find().select("-password")
     res.status(200).json({
       message: "Barcha foydalanuvchilar",
       count: users.length,
       data: users,
-    });
+    })
   } catch (error) {
-    next(error);
+    next(error)
   }
 }
 
@@ -230,8 +230,9 @@ export const getOne = async (req, res, next) => {
 
 export const create = async (req, res, next) => {
   try {
-    const createpayment = await DeliveryStaffModel.create(req.validatedData)
-    res.status(201).send({ message: `Created delivery_staff`, data: createpayment })
+    const createdelivery_staff = await DeliveryStaffModel.create(req.validatedData)
+    const { password, ...rest } = createdelivery_staff.toObject()
+    res.status(201).send({ message: `Created delivery_staff`, data: rest })
   } catch (error) {
     console.log(error)
     next(error)

@@ -8,10 +8,10 @@ import { create, getAll, getOne, update, deleted } from "../controller/payments.
 const paymentsRouter = Router();
 
 
-paymentsRouter.post("/", roleGuard("customer"), validation(paymentValidation), create)
+paymentsRouter.post("/", authGuard, roleGuard("admin", "customer"), validation(paymentValidation), create)
 paymentsRouter.get("/", authGuard, roleGuard("admin", "manager", "customer"), getAll)
 paymentsRouter.get("/:id", authGuard, roleGuard("admin", "manager", "customer"), getOne)
-paymentsRouter.put("/:id", authGuard, roleGuard("customer"), validation(paymentUpdValidation), update)
+paymentsRouter.put("/:id", authGuard, roleGuard("admin", "customer"), validation(paymentUpdValidation), update)
 paymentsRouter.delete("/:id", authGuard, roleGuard("admin", "manager"), deleted)
 
 

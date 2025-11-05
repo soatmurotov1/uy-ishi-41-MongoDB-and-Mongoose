@@ -8,10 +8,10 @@ import { create, getAll, getOne, update, deleted } from "../controller/order_ite
 const orderItemRouter = Router();
 
 
-orderItemRouter.post("/", roleGuard("staff", "manager"), validation(order_itemsValidation), create)
+orderItemRouter.post("/", authGuard, roleGuard("admin", "manager"), validation(order_itemsValidation), create)
 orderItemRouter.get("/", authGuard, roleGuard("staff", "manager", "admin", "customer"), getAll)
 orderItemRouter.get("/:id", authGuard, roleGuard("staff", "manager", "admin", "customer"), getOne)
 orderItemRouter.put("/:id", authGuard, roleGuard("staff", "manager"), validation(order_itemsUpdValidation), update)
-orderItemRouter.delete("/:id", authGuard, roleGuard("manager", "admin"), deleted)
+orderItemRouter.delete("/:id", authGuard, roleGuard("admin", "manager"), deleted)
 
 export default orderItemRouter

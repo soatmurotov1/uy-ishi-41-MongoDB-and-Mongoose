@@ -8,9 +8,9 @@ import { create, getOne, getAll, update, deleted } from "../controller/orders.co
 const router = Router();
 
 
-router.post("/", authGuard, roleGuard("customer"), validation(orderValidation),create)
-router.get("/",authGuard, roleGuard("customer", "admin", "manager"), getAll)
-router.get("/:id", authGuard, roleGuard("customer", "admin", "manager"), getOne)
+router.post("/", authGuard, roleGuard("admin", "customer"), validation(orderValidation),create)
+router.get("/",authGuard, roleGuard("admin", "manager"), getAll)
+router.get("/:id", authGuard, roleGuard("admin", "manager"), getOne)
 router.put("/:id", authGuard, roleGuard("admin"), validation(orderUpdValidation),update);
 router.delete("/:id", authGuard, roleGuard("admin"),deleted)
 
